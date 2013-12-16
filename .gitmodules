@@ -1,0 +1,3 @@
+[submodule "pycairo"]
+	path = pycairo
+	url = git://git.cairographics.org/git/pycairo
