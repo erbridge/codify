@@ -1,3 +1,2 @@
 bitarray==0.8.1
-distribute==0.6.34
 pycairo==1.10.1
