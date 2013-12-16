@@ -65,4 +65,40 @@ class SVGGenerator:
             current_y += line_height
 
 if __name__ == "__main__":
-    SVGGenerator.run("ぴtestぴtestぴtestぴtestぴtest", 4, 300, 100, "output.svg")
+    import getopt
+    import sys
+
+    usage = "codify.py -i <input_str> [-o <output_filename> -n <num_lines> -W <width> -H <height>]"
+
+    try:
+        opts, _ = getopt.getopt(sys.argv[1:], "hi:o:n:W:H:", ["input_str=", "output_filename=", "num_lines=", "width=", "height="])
+    except getopt.GetoptError:
+        print(usage)
+        sys.exit(1)
+
+    input_str = ""
+    output_filename = "output.svg"
+    num_lines = 3
+    width = 600
+    height = 200
+
+    for opt, arg in opts:
+        if opt == "-h":
+            print(usage)
+            sys.exit()
+        elif opt in ("-i", "--input_str"):
+            input_str = arg
+        elif opt in ("-o", "--output_filename"):
+            output_filename = arg
+        elif opt in ("-n", "--num_lines"):
+            num_lines = arg
+        elif opt in ("-W", "--width"):
+            width = arg
+        elif opt in ("-H", "--height"):
+            height = arg
+
+    if not input_str:
+        print(usage)
+        sys.exit(1)
+
+    SVGGenerator.run(input_str, num_lines, width, height, output_filename)
