@@ -1,10 +1,9 @@
 language: python
 python:
-  - "3.1"
   - "3.2"
   - "3.3"
 install:
   - "sudo apt-get install libcairo2-dev"
   - "cd pycairo; python setup.py install; cd .."
   - "pip install --no-deps -r requirements.txt"
-script: test.sh
+script: ./test.sh
