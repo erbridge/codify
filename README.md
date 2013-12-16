@@ -1,5 +1,7 @@
 # codify
 
+[![Build Status](https://travis-ci.org/erbridge/codify.png?branch=master)](https://travis-ci.org/erbridge/codify)
+
 Generate a barcode-like vector graphic from a string.
 
 
