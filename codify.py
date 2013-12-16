@@ -91,11 +91,11 @@ if __name__ == "__main__":
         elif opt in ("-o", "--output_filename"):
             output_filename = arg
         elif opt in ("-n", "--num_lines"):
-            num_lines = arg
+            num_lines = int(arg)
         elif opt in ("-W", "--width"):
-            width = arg
+            width = float(arg)
         elif opt in ("-H", "--height"):
-            height = arg
+            height = float(arg)
 
     if not input_str:
         print(usage)
