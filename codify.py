@@ -9,6 +9,9 @@ from bitarray import bitarray
 
 class Painter:
 
+    black_rgba = (0, 0, 0, 1)
+    white_rgba = (1, 1, 1, 0)
+
     def _draw_rectangle(self, context, width, height):
         context.rel_line_to(width, 0)
         point = context.get_current_point()
@@ -23,12 +26,48 @@ class NaivePainter(Painter):
 
     def draw_rectangle(self, bit, context, width, height):
         if bit:
-            rgba = (0, 0, 0, 1)
+            rgba = self.black_rgba
         else:
-            rgba = (1, 1, 1, 0)
+            rgba = self.white_rgba
 
         context.set_source_rgba(*rgba)
         self._draw_rectangle(context, width, height)
+
+
+class ManchesterPainter(Painter):
+
+    def draw_rectangle(self, bit, context, width, height):
+        if bit:
+            first_callback = self._draw_black_rectangle
+            second_callback = self._draw_white_rectangle
+        else:
+            first_callback = self._draw_white_rectangle
+            second_callback = self._draw_black_rectangle
+
+        first_callback(context, width / 2, height)
+        second_callback(context, width / 2, height)
+
+    def _draw_black_rectangle(self, context, width, height):
+        context.set_source_rgba(*self.black_rgba)
+        self._draw_rectangle(context, width, height)
+
+    def _draw_white_rectangle(self, context, width, height):
+        context.set_source_rgba(*self.white_rgba)
+        self._draw_rectangle(context, width, height)
+
+
+class DifferentialManchesterPainter(ManchesterPainter):
+
+    last_bit = None
+
+    def draw_rectangle(self, bit, context, width, height):
+        # We want to always start with a black rectangle.
+        if self.last_bit is None:
+            self.last_bit = bit
+
+        super().draw_rectangle(bit == self.last_bit, context, width, height)
+
+        self.last_bit = bit
 
 
 class SVGGenerator:
