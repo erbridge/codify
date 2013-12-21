@@ -12,6 +12,14 @@ class Painter:
     black_rgba = (0, 0, 0, 1)
     white_rgba = (1, 1, 1, 0)
 
+    def _draw_black_rectangle(self, context, width, height):
+        context.set_source_rgba(0, 0, 0, 1)
+        self._draw_rectangle(context, width, height)
+
+    def _draw_white_rectangle(self, context, width, height):
+        context.set_source_rgba(1, 1, 1, 0)
+        self._draw_rectangle(context, width, height)
+
     def _draw_rectangle(self, context, width, height):
         context.rel_line_to(width, 0)
         point = context.get_current_point()
@@ -26,12 +34,9 @@ class NaivePainter(Painter):
 
     def draw_rectangle(self, bit, context, width, height):
         if bit:
-            rgba = self.black_rgba
+            self._draw_black_rectangle(context, width, height)
         else:
-            rgba = self.white_rgba
-
-        context.set_source_rgba(*rgba)
-        self._draw_rectangle(context, width, height)
+            self._draw_white_rectangle(context, width, height)
 
 
 class ManchesterPainter(Painter):
@@ -47,27 +52,43 @@ class ManchesterPainter(Painter):
         first_callback(context, width / 2, height)
         second_callback(context, width / 2, height)
 
-    def _draw_black_rectangle(self, context, width, height):
-        context.set_source_rgba(*self.black_rgba)
-        self._draw_rectangle(context, width, height)
-
-    def _draw_white_rectangle(self, context, width, height):
-        context.set_source_rgba(*self.white_rgba)
-        self._draw_rectangle(context, width, height)
-
 
 class DifferentialManchesterPainter(ManchesterPainter):
 
-    last_bit = None
+    _last_bit = None
 
     def draw_rectangle(self, bit, context, width, height):
         # We want to always start with a black rectangle.
-        if self.last_bit is None:
-            self.last_bit = bit
+        if self._last_bit is None:
+            self._last_bit = bit
 
-        super().draw_rectangle(bit == self.last_bit, context, width, height)
+        super().draw_rectangle(bit == self._last_bit, context, width, height)
 
-        self.last_bit = bit
+        self._last_bit = bit
+
+
+class BiphaseMarkPainter(ManchesterPainter):
+
+    _was_white = True
+
+    def draw_rectangle(self, bit, context, width, height):
+        if bit:
+            if self._was_white:
+                first_callback = self._draw_black_rectangle
+                second_callback = self._draw_white_rectangle
+            else:
+                first_callback = self._draw_white_rectangle
+                second_callback = self._draw_black_rectangle
+
+            first_callback(context, width / 2, height)
+            second_callback(context, width / 2, height)
+        else:
+            if self._was_white:
+                self._draw_black_rectangle(context, width, height)
+            else:
+                self._draw_white_rectangle(context, width, height)
+
+            self._was_white = not self._was_white
 
 
 class SVGGenerator:
