@@ -23,11 +23,11 @@ class NaivePainter(Painter):
 
     def draw_rectangle(self, bit, context, width, height):
         if bit:
-            rgb = (0, 0, 0)
+            rgba = (0, 0, 0, 1)
         else:
-            rgb = (1, 1, 1)
+            rgba = (1, 1, 1, 0)
 
-        context.set_source_rgb(*rgb)
+        context.set_source_rgba(*rgba)
         self._draw_rectangle(context, width, height)
 
 
